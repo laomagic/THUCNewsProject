@@ -74,6 +74,7 @@ def create_logger(log_path):
 
 
 def write_label_id():
+    """标签映射为id"""
     data = pd.concat([
         pd.read_csv(config.train_path),
         pd.read_csv(config.test_path),
@@ -118,18 +119,18 @@ def clean_symbols(text):
     return re.sub("\s+", " ", text)
 
 
-def build_dictionary():
+def build_dict_dataset():
     train = pd.read_csv(config.train_path, sep='\t')
     test = pd.read_csv(config.test_path, sep='\t')
     valid = pd.read_csv(config.valid_path, sep='\t')
     data = pd.concat([train, test, valid], axis=0).dropna()
-    data["sentence"] = data['title'] + data['content'] + data['label']
+    # data["sentence"] = data['title'] + data['content']
+    data["sentence"] = data['content']
     # 去除标点符号
     data['clean_sentence'] = data['sentence'].progress_apply(clean_symbols)
     data["cut_sentence"] = data['clean_sentence'].progress_apply(query_cut)
     data['raw_words'] = data["cut_sentence"].progress_apply(lambda x: ' '.join(x))
-    sentence = data['raw_words']
-    return sentence
+    return data
 
 
 if __name__ == '__main__':
