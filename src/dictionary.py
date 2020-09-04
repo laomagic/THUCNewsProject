@@ -9,12 +9,10 @@ class Dictionary(object):
     def __init__(self,
                  max_vocab_size=50000,
                  min_count=None,
-                 start_end_tokens=False,
-                 embedding_size=300):
+                 start_end_tokens=False):
         self.max_vocab_size = max_vocab_size
         self.min_count = min_count
         self.start_end_tokens = start_end_tokens
-        self.embedding_size = embedding_size
         self.PAD_TOKEN = '<PAD>'
 
     def build_dictionary(self, data):
@@ -30,7 +28,7 @@ class Dictionary(object):
 
     def _build_dictionary(self, data):
         """
-
+        构建词典
         :param data: 数据
         :return: token与id的映射
         """
