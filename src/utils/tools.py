@@ -73,19 +73,6 @@ def create_logger(log_path):
     return logger
 
 
-def write_label_id():
-    """标签映射为id"""
-    data = pd.concat([
-        pd.read_csv(config.train_path),
-        pd.read_csv(config.test_path),
-        pd.read_csv(config.valid_path)
-    ]).dropna()
-    label = data['label'].unique()
-    print('标签:{}'.format(label))
-    label2id = dict(zip(label, range(len(label))))
-    json.dump(label2id, open(config.label_path, 'w', encoding='utf-8'))
-
-
 def rm_stop_word(wordList):
     '''
     @description: delete stop_word
