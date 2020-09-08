@@ -2,11 +2,8 @@ from glob import glob
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 import pandas as pd
-import numpy as np
 from collections import defaultdict
 import re
-import random
-from src.utils import config
 import os
 
 
@@ -105,13 +102,15 @@ def process(path, filename='train', frac=1):
     df = pd.concat(sample, axis=0)
     print("{}文件的数据量为:{}".format(filename, df.shape[0]))
     # 保存文件的路径
-    save_path = config.root_path + '/data/' + filename + '.csv'
+    base_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    save_path = base_path + '/data/' + filename + '.csv'
     df.to_csv(save_path, sep='\t', index=False)
     print('{} writing succesfully'.format(save_path))
 
 
 if __name__ == '__main__':
-    category_path = config.data_path
+    root_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    category_path = root_path + '/data/THUCNews/'
     # 语料的路径
     dir_dict = count_text(category_path)
     train_path = defaultdict(list)
@@ -125,6 +124,6 @@ if __name__ == '__main__':
         test_path[label[0]] = test
         valid_path[label[0]] = valid
 
-    process(train_path, filename='train_sa', frac=0.6)
-    process(test_path, filename='test_sa', frac=0.5)
-    process(valid_path, filename='valid_sa', frac=0.5)
+    process(train_path, filename='train', frac=0.6)
+    process(test_path, filename='test', frac=0.5)
+    process(valid_path, filename='valid', frac=0.5)
