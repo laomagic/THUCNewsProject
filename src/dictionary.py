@@ -62,7 +62,12 @@ class Dictionary(object):
 
 if __name__ == '__main__':
     dictionary = Dictionary()
-    data = build_dict_dataset()['raw_words'].values.tolist()
+    data = build_dict_dataset()
+    word = True  # word粒度或者char粒度
+    if word:
+        data = data['raw_words'].values.tolist()
+    else:
+        data = data['raw_words'].apply(lambda x: " ".join("".join(x.split())))
     dictionary.build_dictionary(data)
     joblib.dump(dictionary, config.dict_path)
     print('vocab_words:{}'.format(dictionary.vocab_words[:5]))
