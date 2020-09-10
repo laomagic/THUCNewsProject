@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from sklearn import metrics
 import time
-from src.utils.tools import get_time_dif, EarlyStopping
+from src.utils.tools import get_time_dif
 from tensorboardX import SummaryWriter
 
 
@@ -27,14 +27,11 @@ def init_network(model, method='xavier', exclude='embedding', seed=123):
                 pass
 
 
-def train(config, model, train_iter, dev_iter, test_iter,model_name):
+def train(config, model, train_iter, dev_iter, test_iter, model_name):
     start_time = time.time()
     print(model)
     model.train()
-    optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate)
-    early_stop = EarlyStopping(patience=10, verbose=True, path=config.save_path)
-    # 学习率指数衰减，每次epoch：学习率 = gamma * 学习率
-    # scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
+    optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate)  # 优化器
     total_batch = 0  # 记录进行到多少batch
     dev_best_loss = float('inf')
     last_improve = 0  # 记录上次验证集loss下降的batch数
@@ -58,7 +55,7 @@ def train(config, model, train_iter, dev_iter, test_iter,model_name):
                 dev_acc, dev_loss = evaluate(config, model, dev_iter)
                 if dev_loss < dev_best_loss:
                     dev_best_loss = dev_loss
-                    torch.save(model.state_dict(), config.save_path+model_name+'.pt')
+                    torch.save(model.state_dict(), config.save_path + model_name + '.pt')
                     improve = '*save model*'
                     last_improve = total_batch
                 else:
@@ -80,12 +77,12 @@ def train(config, model, train_iter, dev_iter, test_iter,model_name):
         if flag:
             break
     writer.close()
-    test(config,model,test_iter,model_name)
+    test(config, model, test_iter, model_name)
 
 
-def test(config, model, test_iter,model_name):
+def test(config, model, test_iter, model_name):
     # test
-    model.load_state_dict(torch.load(config.save_path+model_name+'.pt'))
+    model.load_state_dict(torch.load(config.save_path + model_name + '.pt'))
     model.eval()
     start_time = time.time()
     test_acc, test_loss, test_report, test_confusion = evaluate(config, model, test_iter, test=True)
